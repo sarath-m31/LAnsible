@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install NTP
+    apt: name=ntp state=absent
+#  - name: Check if NTP is present
+#    service: name=ntp state=started enabled=yes
