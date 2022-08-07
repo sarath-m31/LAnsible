@@ -3,6 +3,6 @@
   become: yes
   tasks:
   - name: Install NTP
-    apt: name=ntp state=absent
+    apt: name=ntp state=present
 #  - name: Check if NTP is present
 #    service: name=ntp state=started enabled=yes
