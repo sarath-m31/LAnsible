@@ -1,0 +1,9 @@
+---
+# core version
+drupal_core_version: "8.8.x"
+
+#drula path
+drupal_core_path: "/var/www/drupal-{{ drupal_core_version }}-dev"
+
+#domain
+domain: "drupal"

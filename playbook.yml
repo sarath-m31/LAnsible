@@ -1,0 +1,28 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    node_apps_location: /usr/local/opt/node
+
+  tasks:
+    - name: install epel repo
+      yum: name=epel=release state=present
+
+    - name: import gpg key
+      rpm_key:
+        key: "https://rpms.remirepo.net/RPM=GPG=KEY-remi"
+        state: present
+    - name: Install Remi repo.
+      yum:
+        name: "https://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+        state: present
+
+    - name: Ensure firewalld is stopped (since this is for testing).
+      service: name=firewalld state=stopped
+
+    - name: Install Node.js and npm.
+      yum: name=npm state=present enablerepo=epel
+
+    - name: Install Forever (to run our Node.js app).
+      npm: name=forever global=yes state=present

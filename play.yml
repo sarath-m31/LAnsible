@@ -1,0 +1,88 @@
+---
+- host: all
+  become: yes
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: Update apt cache
+      apt: update_cache=yes cache_valid_time=3600
+
+  handlers:
+    - name: restart apache
+      service: name:apache2 state=restarted
+
+  tasks:
+    - name: get software for apt repo
+      apt: 
+        name:
+          - python-apt
+          - python-pycurl
+        state: present
+
+    - name: add ondrej repo
+      apt_repository: repo='ppa:ondrej/php' update_cache=yes
+
+    - name: "install apache, mysql, php"
+      apt:
+        name:
+          - git
+          - curl
+          - unzip
+          - sendmail
+          - apache2
+          - php7.1-common
+          - php7.1-cli
+          - php7.1-dev
+          - php7.1-gd
+          - php7.1-curl
+          - php7.1-json
+          - php7.1-opcache
+          - php7.1-xml
+          - php7.1-mbstring
+          - php7.1-pdo
+          - php7.1-mysql
+          - php-apcu
+          - libpcre3-dev
+          - libapache2-mod-php7.1
+          - python-mysqldb
+          - mysql-server
+        state: present
+
+    - name: disable firewall
+      service: name=ufw state=stopped
+
+    - name: start apache mysql php
+      service: "name={{ item }} state=started enabled=yes"
+
+    - name: enable apache rewrite module
+      apache2_module: name=rewrite state=present
+      notify: restart apache
+
+    - name: Add apache vhost
+      template:
+        src: "templates/drula.test.conf.j2"
+        dest: "/etc/apache2/sites-available/{{ domain }}.test.conf"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart apache
+
+    - name: symlink drupal vhost to sites-enbled
+      file:
+        src: "/etc/apache2/sites-available/{{ domain }}.test.conf"
+        dest: "/etc/apache2/sites-enabled/{{ domain }}.test.conf"
+        state: link
+      notify: restart apache
+
+    - name: remove default vhost file
+      file:
+        path: "/etc/apache2/sites-enabled/000-default.conf"
+        state: absent
+      notify: restart apache
+
+ 
+
+
+  
