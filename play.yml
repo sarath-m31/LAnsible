@@ -55,6 +55,9 @@
 
     - name: start apache mysql php
       service: "name={{ item }} state=started enabled=yes"
+      with_items:
+        - apache2
+        - mysql
 
     - name: enable apache rewrite module
       apache2_module: name=rewrite state=present
