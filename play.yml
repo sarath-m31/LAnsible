@@ -65,7 +65,7 @@
 
     - name: Add apache vhost
       template:
-        src: "templates/drula.test.conf.j2"
+        src: "templates/drupal.test.conf.j2"
         dest: "/etc/apache2/sites-available/{{ domain }}.test.conf"
         owner: root
         group: root
@@ -106,14 +106,14 @@
 
     - name: download composer installer
       get_url:
-       url: https://getcomposer.org/installer
-       dest: /tmp/composer-installer.php
-       mode: 0755
+        url: https://getcomposer.org/installer
+        dest: /tmp/composer-installer.php
+        mode: 0755
 
     - name: run composer installer
       command: >
-        php /tmp/composer-installer.php
-        chdir=/tmp/composer-installer.php
+        php composer-installer.php
+        chdir=/tmp
         creates=/usr/local/bin/composer
 
     - name: move composer into globally accessible location
